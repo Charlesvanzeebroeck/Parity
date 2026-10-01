@@ -1,0 +1,65 @@
+const { chromium } = require('playwright');
+const path = require('path'); const fs = require('fs');
+const EXT = path.resolve(__dirname, '..');
+(async () => {
+  const ud = fs.mkdtempSync(require('os').tmpdir() + '/parity-ud-');
+  const ctx = await chromium.launchPersistentContext(ud, { channel: 'chromium', headless: true, viewport: null, args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`, '--window-size=1600,1000'] });
+  let [sw] = ctx.serviceWorkers(); if (!sw) sw = await ctx.waitForEvent('serviceworker');
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => console.log('PAGEERR', e.message));
+  await page.goto('http://localhost:8765/demo.html');
+  await sw.evaluate(async () => { const [t] = await chrome.tabs.query({ url: 'http://localhost:8765/*' }); await togglePanel(t); });
+  await page.waitForTimeout(600);
+  await page.locator('parity-panel input[type=file]').setInputFiles([path.join(__dirname, 'design-1440.jpg')]);
+  await page.waitForTimeout(1200);
+  await page.locator('parity-panel [data-act=edit]').click();
+  await page.locator('parity-panel [data-f=vh]').fill('900');
+  await page.locator('parity-panel [data-act=edit-save]').click();
+  await page.waitForTimeout(600);
+  // pick the section
+  await page.locator('parity-panel [data-act=scope-pick]').click();
+  await page.evaluate(() => document.querySelector('#services').scrollIntoView());
+  await page.waitForTimeout(300);
+  const sb = await page.locator('#services').boundingBox();
+  await page.mouse.move(sb.x + 20, sb.y + 20);
+  await page.waitForTimeout(150);
+  await page.mouse.down(); await page.mouse.up();
+  await page.waitForTimeout(400);
+  console.log('scope chip:', await page.locator('parity-panel .scope code').textContent());
+  const run = async () => {
+    const rp = ctx.waitForEvent('page', { timeout: 60000 }).catch(() => null);
+    await page.locator('parity-panel button[data-act=analyze]').click();
+    let report = await rp;
+    if (!report) report = ctx.pages().find((p) => p.url().includes('report.html'));
+    await report.waitForLoadState();
+    await report.waitForFunction(() => document.getElementById('progress').hidden && document.querySelectorAll('.card, .empty, .note').length > 0, null, { timeout: 120000 });
+    await report.waitForTimeout(600);
+    return report;
+  };
+  const getRep = () => sw.evaluate(async () => { const all = await chrome.storage.local.get(null); const k = Object.keys(all).filter((x) => x.startsWith('rep:') && x.includes('@')); return k.length ? all[k[0]] : null; });
+  let report = await run();
+  let rep = await getRep();
+  console.log('scope:', JSON.stringify(rep && rep.scope));
+  for (const it of (rep ? rep.issues : [])) console.log('  ', it.id, it.kind.join(), it.summary.slice(0, 100));
+  await report.setViewportSize({ width: 1500, height: 900 });
+  await report.screenshot({ path: 'shot-scope-report.png' });
+  // section JPEG
+  await page.bringToFront();
+  await page.locator('parity-panel [data-act=sec-add]').click().catch(() => {});
+  await page.locator('parity-panel input[type=file]').setInputFiles([path.join(__dirname, 'section-1440.jpg')]);
+  await page.waitForTimeout(1200);
+  console.log('sec row:', await page.locator('parity-panel .secrow').textContent());
+  await page.evaluate(() => document.querySelector('#services').scrollIntoView());
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: 'shot-scope-overlay.png' });
+  report = await run();
+  rep = await getRep();
+  console.log('scope2:', JSON.stringify(rep && rep.scope && { source: rep.scope.source, crop: rep.scope.crop }));
+  for (const it of (rep ? rep.issues : [])) console.log('  ', it.id, it.kind.join(), it.summary.slice(0, 100));
+  const files = await sw.evaluate(() => new Promise((r) => chrome.downloads.search({}, (d) => r(d.length))));
+  console.log('downloads', files);
+  // whole-page report still separate
+  const keys = await sw.evaluate(async () => Object.keys(await chrome.storage.local.get(null)).filter((k) => /^(rep|cap|crop):/.test(k)));
+  console.log('keys', keys.map((k) => k.replace(/^.*?:http:\/\/localhost:8765\/demo.html:/, '')));
+  await ctx.close();
+})().catch((e) => { console.error('FAIL', e); process.exit(1); });

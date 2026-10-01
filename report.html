@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parity report</title>
+<link rel="icon" href="icons/icon32.png">
+<link rel="stylesheet" href="report.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark"></span>Parity</div>
+  <div class="page"><div class="pt" id="pageTitle">Loading…</div><a class="pu" id="pageUrl" target="_blank" rel="noreferrer"></a></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="actions">
+    <button class="btn" id="copyPrompt" title="Copy a ready-to-paste prompt for a coding agent">Copy agent prompt</button>
+    <button class="btn" id="copyJson">Copy JSON</button>
+    <button class="btn" id="dlJson">Download JSON</button>
+    <button class="btn pri" id="rerun" title="Capture the page again and re-run the analysis">Re-analyze</button>
+  </div>
+</header>
+<main>
+  <aside class="side">
+    <div class="stats" id="stats"></div>
+    <div class="filters">
+      <div class="sev" id="sevFilters">
+        <button class="fchip on" data-sev="high">High</button>
+        <button class="fchip on" data-sev="medium">Medium</button>
+        <button class="fchip on" data-sev="low">Low</button>
+      </div>
+      <input id="search" type="search" placeholder="Filter by selector, text, kind…">
+    </div>
+    <div class="list" id="list"></div>
+  </aside>
+  <section class="viewer">
+    <div class="vbar">
+      <div class="seg" id="viewMode">
+        <button data-v="side" class="on">Side by side</button>
+        <button data-v="overlay">Overlay</button>
+        <button data-v="diff">Difference</button>
+      </div>
+      <label class="op" id="opWrap">Design <input type="range" id="opacity" min="0" max="100" value="50"><span id="opVal">50%</span></label>
+      <div class="seg" id="zoom">
+        <button data-z="fit" class="on">Fit</button>
+        <button data-z="0.5">50%</button>
+        <button data-z="1">100%</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="boxes" checked> Boxes</label>
+    </div>
+    <div class="stage-wrap" id="stageWrap"><div class="stage" id="stage"></div></div>
+  </section>
+</main>
+<div class="progress" id="progress" hidden>
+  <div class="pcard">
+    <div class="plabel" id="pLabel">Analyzing…</div>
+    <div class="pbar"><i id="pBar"></i></div>
+    <div class="psub" id="pSub"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="report.js"></script>
+</body>
+</html>

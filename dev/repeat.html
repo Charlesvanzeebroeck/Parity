@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;background:#faf8f5}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 48px;background:#fff;border-bottom:1px solid #e5e5e5}
+.logo{font-weight:700;font-size:22px} nav{display:flex;gap:28px;font-size:15px}
+.hero{height:100vh;min-height:520px;display:flex;flex-direction:column;justify-content:center;padding:0 48px;background:linear-gradient(135deg,#1b2a4a,#3b5b9a);color:#fff}
+.hero h1{font-size:64px;line-height:1.05;margin:0 0 24px;max-width:760px}
+.hero p{font-size:20px;line-height:30px;margin:0 0 32px;max-width:560px;opacity:.9}
+.btn{display:inline-block;align-self:flex-start;background:#ffcf33;color:#1a1a1a;padding:14px 28px;border-radius:999px;font-weight:700;text-decoration:none}
+.section{padding:96px 48px}
+.section h2{font-size:40px;margin:0 0 16px}
+.section .lead{font-size:18px;line-height:28px;margin:0 0 48px;max-width:640px;color:#555}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card .icon{width:48px;height:48px;border-radius:12px;background:#3b5b9a;margin-bottom:20px}
+.card h3{font-size:22px;margin:0 0 10px}
+.card p{font-size:16px;line-height:24px;margin:0;color:#666}
+.cta{margin:0 48px 96px;padding:64px;border-radius:24px;background:#1b2a4a;color:#fff;text-align:center}
+.cta h2{font-size:36px;margin:0 0 20px}
+footer{padding:40px 48px;border-top:1px solid #e5e5e5;font-size:14px;color:#777;display:flex;justify-content:space-between}
+@keyframes fadein{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.reveal{animation:fadein 1.2s ease 0.5s both}
+</style>
+<style id="variant"></style>
+</head><body>
+<header><div class="logo">Northwind</div><nav><a>Work</a><a>Services</a><a>About</a><a>Contact</a></nav></header>
+<section class="hero"><h1 class="reveal">We design brands that move people.</h1><p>Strategy, identity and digital products for companies that want to stand out in crowded markets.</p><a class="btn" href="#">Start a project</a></section>
+<section class="section" id="services"><h2>What we do</h2><p class="lead">From first sketch to final launch, we cover the whole journey with a small senior team.</p>
+<div class="grid"><div class="card"><div class="icon"></div><h3>Teaser</h3><p>Same teaser card repeated in a list of news items.</p></div><div class="card"><div class="icon"></div><h3>Teaser</h3><p>Same teaser card repeated in a list of news items.</p></div><div class="card"><div class="icon"></div><h3>Teaser</h3><p>Same teaser card repeated in a list of news items.</p></div><div class="card"><div class="icon"></div><h3>Teaser</h3><p>Same teaser card repeated in a list of news items.</p></div><div class="card"><div class="icon"></div><h3>Teaser</h3><p>Same teaser card repeated in a list of news items.</p></div><div class="card"><div class="icon"></div><h3>Teaser</h3><p>Same teaser card repeated in a list of news items.</p></div></div></section>
+<div class="cta"><h2>Ready when you are.</h2><a class="btn" href="#" style="align-self:center">Book a call</a></div>
+<footer><span>© 2026 Northwind Studio</span><span>Brussels · Remote</span></footer>
+</body></html>

@@ -1,0 +1,61 @@
+const { chromium } = require('playwright');
+const path = require('path'); const fs = require('fs');
+const EXT = path.resolve(__dirname, '..');
+(async () => {
+  const ud = fs.mkdtempSync(require('os').tmpdir() + '/parity-ud-');
+  const ctx = await chromium.launchPersistentContext(ud, { channel: 'chromium', headless: true, viewport: null, args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`, '--window-size=1600,1000'] });
+  let [sw] = ctx.serviceWorkers(); if (!sw) sw = await ctx.waitForEvent('serviceworker');
+  const page = await ctx.newPage();
+  await page.goto('http://localhost:8765/demo.html');
+  await sw.evaluate(async () => { const [t] = await chrome.tabs.query({ url: 'http://localhost:8765/*' }); await togglePanel(t); });
+  await page.waitForTimeout(600);
+  await page.locator('parity-panel input[type=file]').setInputFiles([path.join(__dirname, 'design-1440.jpg')]);
+  await page.waitForTimeout(1500);
+  // set vh 900 to remove the hero viewport artifact
+  await page.locator('parity-panel [data-act=edit]').click();
+  await page.locator('parity-panel [data-f=vh]').fill('900');
+  await page.locator('parity-panel [data-act=edit-save]').click();
+  await page.waitForTimeout(800);
+  // ignore the footer via pick mode ⌥ click
+  await page.keyboard.press('c');
+  const f = await page.locator('footer').boundingBox();
+  await page.evaluate(() => document.querySelector('footer').scrollIntoView());
+  await page.waitForTimeout(300);
+  const fb = await page.locator('footer').boundingBox();
+  await page.mouse.move(fb.x + 30, fb.y + fb.height / 2);
+  await page.keyboard.down('Alt'); await page.mouse.down(); await page.mouse.up(); await page.keyboard.up('Alt');
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: 'shot-ignore.png' });
+  await page.keyboard.press('Escape');
+  const run = async (label) => {
+    const rp = ctx.waitForEvent('page', { timeout: 60000 }).catch(() => null);
+    await page.locator('parity-panel button[data-act=analyze]').click();
+    let report = await rp;
+    if (!report) report = ctx.pages().find((p) => p.url().includes('report.html'));
+    await report.waitForLoadState();
+    await report.waitForFunction(() => document.getElementById('progress').hidden && document.querySelectorAll('.card, .empty').length > 0, null, { timeout: 120000 });
+    await report.waitForTimeout(500);
+    return report;
+  };
+  let report = await run('first');
+  const rep1 = await sw.evaluate(async () => { const all = await chrome.storage.local.get(null); const k = Object.keys(all).find((x) => x.startsWith('rep:')); return all[k]; });
+  console.log('breakpoints:', JSON.stringify(rep1.projectBreakpoints));
+  console.log('ignored:', rep1.ignored, 'stats', JSON.stringify(rep1.stats));
+  for (const it of rep1.issues) console.log(' ', it.id, it.kind.join(','), it.summary, it.source ? JSON.stringify(it.source) : '', it.block ? JSON.stringify(it.block.attrs) : '');
+  console.log('ledger rows', rep1.ledger.length, JSON.stringify(rep1.ledger.map(l => [l.selector, l.ownTopDelta, l.heightDelta, l.cumulativeBottomDelta])));
+  await report.setViewportSize({ width: 1500, height: 950 });
+  await report.screenshot({ path: 'shot-report2.png' });
+  // "fix" the lead margin in the live page, re-analyze -> diff
+  await page.bringToFront();
+  await page.addStyleTag({ content: '.section h2{margin-bottom:28px}' });
+  report = await run('second');
+  const rep2 = await sw.evaluate(async () => { const all = await chrome.storage.local.get(null); const k = Object.keys(all).find((x) => x.startsWith('rep:')); return all[k]; });
+  console.log('diff:', JSON.stringify(rep2.diff));
+  await report.setViewportSize({ width: 1500, height: 950 });
+  await report.locator('details.fold').first().evaluate((d) => d.open = true).catch(() => {});
+  await report.locator('details.fold').nth(1).evaluate((d) => d.open = true).catch(() => {});
+  await report.waitForTimeout(300);
+  await report.screenshot({ path: 'shot-report-diff2.png' });
+  const prompt = await report.evaluate(() => 1);
+  await ctx.close();
+})().catch((e) => { console.error('FAIL', e); process.exit(1); });
