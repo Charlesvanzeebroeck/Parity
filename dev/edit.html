@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Parity edit fixture</title>
+<!-- strict CSP: Parity must work without inline <style> / style attributes from the page's point of view -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'nonce-p4r1ty'; script-src 'self' 'nonce-p4r1ty'; img-src 'self' data:">
+<style nonce="p4r1ty">
+  :root{--spacing:.25rem;--text-xl:1.25rem;--text-2xl:1.5rem;--text-5xl:3rem;--color-ink:#111214;--color-lime:#c8ff3d;--radius-lg:.5rem;--radius-xl:.75rem}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,sans-serif;color:var(--color-ink)}
+  header{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:#eee}
+  .nav{display:flex;gap:16px}
+  .hero{position:relative;padding:80px 40px;background:#ddd}
+  .hero h1{font-size:48px;line-height:56px;margin:0 0 16px}
+  .hero p{margin:0}
+  .badge{position:absolute;top:24px;right:40px;padding:4px 10px;background:var(--color-lime);border-radius:8px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:40px}
+  .card{padding:24px;background:#f4f4f4;border-radius:12px}
+  .card-title{font-size:22px;margin:0 0 8px}
+  .stack{padding:0 40px 40px}
+  .stack p{margin:0 0 12px}
+</style>
+</head>
+<body>
+  <header data-astro-source-file="/Users/x/site/src/components/Header.astro" data-astro-source-loc="4:3">
+    <b>Logo</b>
+    <nav class="nav"><a href="#one">One</a><a href="#two">Two</a><a href="#three">Three</a></nav>
+  </header>
+  <section class="hero" data-astro-source-file="/Users/x/site/src/components/Hero.astro" data-astro-source-loc="2:1">
+    <h1 class="text-5xl leading-14" data-astro-source-file="/Users/x/site/src/components/Hero.astro" data-astro-source-loc="3:3">Hello there</h1>
+    <p>Subtitle text</p>
+    <span class="badge rounded-lg">New</span>
+  </section>
+  <section class="grid gap-6" id="cards">
+    <div class="card"><h3 class="card-title text-[22px]">Card A</h3><p>Alpha</p></div>
+    <div class="card"><h3 class="card-title text-[22px]">Card B</h3><p>Beta</p></div>
+    <div class="card"><h3 class="card-title text-[22px]">Card C</h3><p>Gamma</p></div>
+  </section>
+  <div class="stack"><p>one</p><p>two</p><p>three</p></div>
+</body>
+</html>

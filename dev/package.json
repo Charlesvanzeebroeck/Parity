@@ -4,22 +4,11 @@
   "description": "Test harness for the Parity Chrome extension (not part of the shipped extension)",
   "scripts": {
     "serve": "python3 -m http.server 8765",
-    "test:core": "node run-test.js",
-    "test:mobile": "W=375 VARIANT=\".section{padding:64px 20px} header{padding:16px 20px} nav{gap:12px}\" node run-test.js",
-    "test:identical": "VARIANT=\" \" node run-test.js",
-    "test:e2e": "node e2e.js",
-    "test:pick": "node pick.js",
-    "fixtures": "W=375 VARIANT=\".section{padding:64px 20px} header{padding:16px 20px} nav{gap:12px}\" node run-test.js && cp design.jpg design-375.jpg && node run-test.js && cp design.jpg design-1440.jpg && SCOPE='#services' node run-test.js && cp section.jpg section-1440.jpg",
-    "test:typescale": "PAGE=big.html VARIANT=\".section h2{font-size:35px}\" node run-test.js",
-    "test:repeat": "PAGE=repeat.html VARIANT=\".grid{row-gap:56px; column-gap:40px}\" node run-test.js",
-    "test:e2e2": "node e2e2.js",
-    "test:figma": "node e2e-figma.js",
-    "test:scope": "SCOPE='#services' node run-test.js",
-    "test:scope-jpg": "SCOPE='#services' SECTIONJPG=1 node run-test.js",
-    "test:e2e-scope": "node e2e-scope.js"
+    "test": "node edits-test.js",
+    "test:e2e": "node e2e-edit.js",
+    "shots": "SHOTS=1 node e2e-edit.js"
   },
   "devDependencies": {
-    "playwright": "^1.56.0",
-    "sharp": "^0.34.5"
+    "playwright": "^1.56.0"
   }
 }
