@@ -2,6 +2,8 @@
 
 Parity 3 has no AI, no Figma link and no automatic diff. You get two reliable things: the **design JPEG** laid over the page, and **your mouse**. Drag the real page elements until they line up with the design. Parity records every gesture as the CSS property that actually controls it, then exports a short `edits.md` that a coding agent (or you) applies in source.
 
+<img width="1011" height="571" alt="10" src="https://github.com/user-attachments/assets/df0e638f-f8d5-4bd5-ace3-9e9fccf9a66b" />
+
 ## Install (unpacked)
 1. Keep this folder somewhere permanent (Chrome loads it in place).
 2. `chrome://extensions` → **Developer mode** → **Load unpacked** → pick this folder.
